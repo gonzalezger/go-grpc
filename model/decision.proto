@@ -1,0 +1,80 @@
+syntax="proto3";
+
+package model;
+
+option go_package = "github.com/EurosportDigital/gps-decengine/model";
+
+service DecisioningEngine {
+  rpc GetBestProfiles (ClientInfo) returns (Profile) {}
+  rpc RefreshCache(RefreshCacheParams) returns (RefreshCacheResponse) {}
+}
+
+message ClientInfo {
+	UserInfo userInfo = 1;
+	DeviceInfo deviceInfo = 2;
+	bool preferDRM = 3;
+}
+
+message UserInfo {
+
+  enum VideoQuality {
+    SD = 0;
+    HD = 1;
+    UHD = 2;
+  }
+
+  enum VideoBitrate {
+    LOW = 0;
+    MID = 1;
+    HIGH = 2;
+  }
+
+  VideoQuality video_quality_entitlement = 1;
+  VideoBitrate data_saver = 2;
+}
+
+message DeviceInfo {
+
+  string platform = 3;
+  string user_agent = 4;
+
+  message Resolution {
+    int32 width = 1;
+    int32 height = 2;
+  }
+
+  Resolution screen_resolution = 5;
+
+  enum VideoDecoder {
+    H264 = 0;
+    H265 = 1;
+    VP9 = 2;
+  }
+
+  enum Hdr {
+    HDR10 = 0;
+    DOLBY_VISION = 1;
+    SDR = 2;
+  }
+
+  enum Sound {
+    DOLBY_DIGITAL = 0;
+    STEREO = 1;
+    DOLBY_DIGITAL_PLUS = 2;
+  }
+
+  repeated VideoDecoder hw_decoding_capabilities = 6;
+
+  repeated Hdr hdr_capabilities = 7;
+
+  repeated Sound sound_capabilities = 8;
+}
+
+message Profile {
+  string primary_profile = 1;
+  string fallback_profile = 2;
+}
+
+message RefreshCacheParams{}
+
+message RefreshCacheResponse {}
